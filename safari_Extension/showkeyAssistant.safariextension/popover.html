@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>showkey</title>
+
+<script src="popover.js"></script>
+
+</head>
+
+<style type="text/css">
+
+body{background-color:#FFF}
+
+.pin_confirmed{
+	margin-left:15px;
+	width:275px;
+	height:48px;
+	background:url(http://tvupdate.joyplus.tv/showkeyextension/images/PIN_confirmed.png) no-repeat;
+	}
+#unbindBtn{
+	margin-left:190px;
+	width:90px;
+	height:48px;
+}
+.pin_code_info{
+	margin-left:155px;
+	width:100px;
+	background:none;
+	color:rgba(122, 159, 189, 1);
+	font-size:20px;
+	padding-top:12px;
+	padding-bottom:12px;
+	}
+
+.inputPinCode{
+	margin-top:0;
+	margin-left:20px;
+	width:275px;
+	height:48px;
+	background:url(http://tvupdate.joyplus.tv/showkeyextension/images/input_PIN.png) no-repeat;
+	}
+#pingCode{
+	margin:0 0 0 100px;
+	height:35px;
+	width:165px;
+	background:none;
+	border:none;
+	background-color:rgba(1,1,1,0);
+	color:rgba(122, 159, 189, 1);
+	padding:5px;
+	text-align:center;
+	font-size:24px;
+	outline: none;
+}
+.pin_statue_empty{
+	margin-left:280px;
+	margin-top:-43px;
+	height:37px;
+	width:37px;
+	}
+	
+.pin_statue_success{
+	margin-left:280px;
+	margin-top:-37px;
+	height:37px;
+	width:37px;
+	}
+	
+.pin_statue_fail{
+	margin-left:280px;
+	margin-top:-37px;
+	height:37px;
+	width:37px;
+	}
+#errorDiv{
+	margin-left:4px;
+	margin-top:10px;
+	}
+.errorMsg{
+	height:15px;
+	width:275px;
+	color:red;
+	font-size:14px;
+	}
+.div_url{
+	width: 275px;
+	height: 48px;
+	margin-top: 30px;
+	margin-left:20px;
+	background:url(http://tvupdate.joyplus.tv/showkeyextension/images/input_source_URL.png) no-repeat;
+	}
+#currentUrl{
+	margin:0 0 0 100px;
+	height:35px;
+	width:165px;
+	background:none;
+	border:none;
+	color:rgba(122, 159, 189, 1);
+	padding:5px;
+	text-align:center;
+	outline: none;
+	}
+.url_empty{
+	margin-left:280px;
+	margin-top:-43px;
+	height:37px;
+	width:37px;
+	}
+	
+.url_correct{
+	margin-left:280px;
+	margin-top:-40px;
+	height:37px;
+	width:37px;
+	}
+	
+.url_wrong{
+	margin-left:280px;
+	margin-top:-40px;
+	height:37px;
+	width:37px;
+	}
+.pushResultDiv{
+	margin-left:20px;
+	margin-top:10px;
+}
+.pushResultMsg{
+	height:15px;
+	width:275px;
+	color:red;
+	font-size:14px;
+}
+
+.confirmDiv{
+	width: 275px;
+	height: 44px;
+	margin-top: 8px;
+	margin-left:20px;
+}
+#confirmBtn{
+	width: 275px;
+	height: 44px;
+	margin:0 0 0 0;
+	background:url(http://tvupdate.joyplus.tv/showkeyextension/images/confirm_btn.png) no-repeat;
+	border:none;
+	}
+
+#bottomView{
+	margin-left:0px;
+	margin-top:20px;
+	}
+	
+</style>
+
+<body>
+
+<p class="topLogo"><img src="http://tvupdate.joyplus.tv/showkeyextension/images/showkey_icon.png" width="254" height="39"/></p>
+
+<div class="pin_confirmed" id="pin_confirmed" style="display:none">
+<a id="unbindBtn">
+<img src="http://tvupdate.joyplus.tv/showkeyextension/images/unbind_n.png" id="unbindImage" width="90px" height="48px"/>
+</a>
+<p class="pin_code_info" id="pin_code_info"></p>
+</div>
+
+<div class="inputPinCode" id="inputPinCode">
+<input type="text" name="pingCode" id="pingCode" value=""
+maxlength=6 />
+
+<div class="pin_statue_empty" id="pin_statue_empty"><img src="http://tvupdate.joyplus.tv/showkeyextension/images/statue_empty.png"/></div> 
+<div class="pin_statue_success" id="pin_statue_success" style="display:none"><img src="http://tvupdate.joyplus.tv/showkeyextension/images/statue_success.png"/></div>
+<div class="pin_statue_fail" id="pin_statue_fail" style="display:none"><img src="http://tvupdate.joyplus.tv/showkeyextension/images/statue_fail.png"/></div>
+<div class="errorDiv" id="errorDiv"><span class="errorMsg" id="errorMsg"> </span></div>
+</div>
+
+<div class="div_url" id="div_url">
+<input type="text" name="currentUrl" id="currentUrl" value=""/>
+<div id="url_empty" class="url_empty"><img src="http://tvupdate.joyplus.tv/showkeyextension/images/statue_empty.png"/></div>
+<div id="url_correct" class="url_correct" style="display:none"><img src="http://tvupdate.joyplus.tv/showkeyextension/images/statue_success.png"/></div>
+<div id="url_wrong" class="url_wrong" style="display:none"><img src="http://tvupdate.joyplus.tv/showkeyextension/images/statue_fail.png"/></div>
+</div>
+
+<div class="pushResultDiv" id="pushResultDiv"><span class="pushResultMsg" id="pushResultMsg">请输入磁力链、电驴或视频网址</span></div>
+</div>
+
+<div class="confirmDiv" id="confirmDiv">
+<a id="confirmA">
+<img src="http://tvupdate.joyplus.tv/showkeyextension/images/confirm_btn.png" id="confirmBtnImage" width="275px" height="44px"/>
+</a>
+
+</div>
+
+<div class="bottomView" id="bottomView">
+<div class="separateLing">
+<img src="http://tvupdate.joyplus.tv/showkeyextension/images/separateLine.png" width="350" height="2"/>
+</div>
+<a href="http://www.showkey.tv/normal-questions">
+<img border="0" src="http://tvupdate.joyplus.tv/showkeyextension/images/common_question.png" width="350" height="59"/>
+</a>
+</div>
+</body>
+</html>

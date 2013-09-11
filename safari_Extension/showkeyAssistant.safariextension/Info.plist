@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>joyplus.tv</string>
+	<key>Builder Version</key>
+	<string>8536.30.1</string>
+	<key>CFBundleDisplayName</key>
+	<string>showkeyAssistant</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.joyplus.showkeyassistant</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>Chrome</key>
+	<dict>
+		<key>Database Quota</key>
+		<real>5242880</real>
+		<key>Popovers</key>
+		<array>
+			<dict>
+				<key>Filename</key>
+				<string>popover.html</string>
+				<key>Height</key>
+				<real>380</real>
+				<key>Identifier</key>
+				<string>showkeyPopovers</string>
+				<key>Width</key>
+				<real>360</real>
+			</dict>
+		</array>
+		<key>Toolbar Items</key>
+		<array>
+			<dict>
+				<key>Command</key>
+				<string></string>
+				<key>Identifier</key>
+				<string>showkeyToolbarItem</string>
+				<key>Image</key>
+				<string>icon16.png</string>
+				<key>Label</key>
+				<string>showkey_logo</string>
+				<key>Popover</key>
+				<string>showkeyPopovers</string>
+			</dict>
+		</array>
+	</dict>
+	<key>Content</key>
+	<dict>
+		<key>Scripts</key>
+		<dict/>
+	</dict>
+	<key>Description</key>
+	<string>“showkey转屏助手”插件可以让你通过“傻瓜式”操作帮您获取正在访问页面的视频种子地址，一键转屏到电视大屏幕上。小屏转大屏，推你想推！</string>
+	<key>ExtensionInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>Permissions</key>
+	<dict>
+		<key>Website Access</key>
+		<dict>
+			<key>Include Secure Pages</key>
+			<true/>
+			<key>Level</key>
+			<string>All</string>
+		</dict>
+	</dict>
+	<key>Update Manifest URL</key>
+	<string>http://tvupdate.joyplus.tv/browser_plugin/showkeyManifest.plist</string>
+	<key>Website</key>
+	<string>http://www.showkey.tv/normal-questions</string>
+</dict>
+</plist>
