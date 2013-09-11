@@ -25,7 +25,7 @@
       "default_popup": "popup.html"
   },
   "background": {
-    "scripts": ["js/popup.js"]
+    "scripts": ["js/contextMenu.js"]
   },
   "manifest_version": 2
 }
