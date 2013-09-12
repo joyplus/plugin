@@ -1,0 +1,255 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="/stylesheets/weixinstyle.css"/>
+    <meta name="apple-itunes-app" content="app-id=587246114">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="description" content="推电视">
+    <script src="http://joycdn.showkey.tv/tt/js/jquery.js"></script>
+    <script src="http://joycdn.showkey.tv/tt/js/jquery.cookie.js"></script>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0"/>
+    <title>推电视</title>
+
+    <script>
+        var prevalidPinCodeFlag = true;
+
+        var md5_code = '<%= md5_code %>';
+        var weixinkey = '<%= weixinkey %>';
+        var url = '<%= url %>';
+        $(document).ready(function () {
+        if (url != 'undefined' && url != "") {
+             $("#url").val(url);
+             }
+        });
+
+
+        if (md5_code != 'undefined' && md5_code != "") {
+            prevaliMd5Code(md5_code);
+        } else if ($.cookie('md5_code') !== undefined) {
+            md5_code = $.cookie('md5_code');
+            prevaliMd5Code(md5_code);
+        }
+
+
+        function prevaliMd5Code(md5_code) {
+            $.ajax({
+                type: "GET",
+                url: '/preValidateMd5Code?md5_code=' + md5_code + '&time=' + new Date().valueOf(),
+                beforeSend: function () {
+                    $('#info_right').empty('').append('正在连接...');
+                },
+                success: function (resp) {
+                    if (typeof resp.pin_code != 'undefined') {
+                        $("#pingCode").val(resp.pin_code);
+                        $('#notice_info').empty('').append('');//验证通过(连接到盒子:' + resp.device + ")"
+                        $('#info_bar_left').empty('').append('已绑定：' + resp.device);
+                        $('#info_bar_right').empty('').append('<span onclick="clearInput();">重新输入</span>');
+                        isConnDevice = true;
+                        $("#pingCode").attr("disabled", true);
+                        $('#switch_bar').css("background", "#32A5BE");
+                        $('#switch_bar').css("color", "#FFF");
+                        $('#input_bar').css("display", "none");
+                        // $('#input_bar').css("background-image", "url(../images/pin_bg.png)");
+                        // $('#pingCode').css("background", "#32A5BE");
+                        //$('#pingCode').css("color", "#ffffff");
+                    } else {
+                        $('#notice_info').empty('').append('');
+                        prevalidPinCodeFlag = true;
+                        $("#pingCode").attr("disabled", false);
+                    }
+                },
+                error: function () {
+                    $('#info_right').empty('').append('系统错误，联系客服！');
+                }
+            });
+        }
+
+        function getPincode() {
+            var pincode = $('#pingCode').val();
+
+            prevalidPinCode(pincode);
+        }
+
+        function getUrl() {
+        if($("#url").val()!=''){
+            $("#clearText").css("display", "block");
+        }else{
+           $("#clearText").css("display", "none");
+        }
+        }
+
+        function clearText() {
+            $("#url").val('');
+            getUrl();
+        }
+
+        function clearInput() {
+            $("#pingCode").val('');
+            prevalidPinCodeFlag = true;
+            $("#pingCode").attr("disabled", false);
+            $('#info_bar_left').empty('').append('请先输入PIN码');
+            $('#info_bar_right').empty('');
+            $('#notice_info').empty('');
+            isConnDevice = false;
+            $('#input_bar').css("display", "block");
+            $('#input_bar').css("background-image", "url(../images/pin_bg_activate.png)");
+            $('#pingCode').css("background", "#ffffff");
+            $('#pingCode').css("color", "#32A5BE");
+            $('#switch_bar').css("color", "#8b8b8b");
+            $('#switch_bar').css("background", "#ababab");
+        }
+
+        function prevalidPinCode(pincode) {
+
+            if (pincode != '' && pincode.length == 6 && prevalidPinCodeFlag) {
+                prevalidPinCodeFlag = false;
+                //checked = $('#rememberPin')[0].checked;
+                $('#notice_info').empty('').append('验证中...');
+//        $("#pingCode").attr("disabled", true);
+                $.ajax({
+                    type: "GET",
+                    url: '/preValidatePinCode?pin_code=' + pincode + '&time=' + new Date().valueOf() + '&weixinkey=' + weixinkey,
+                    beforeSend: function () {
+                        $('#notice_info').empty('').append('正在连接...');
+                    },
+                    success: function (resp) {
+                        if (resp) {
+                            $('#notice_info').empty('').append('');//验证通过(连接到盒子:' + resp.device + ")"
+                            $('#info_bar_left').empty('').append('已绑定：' + resp.device);
+                            $('#info_bar_right').empty('').append('<span onclick="clearInput();">重新输入</span>');
+                            isConnDevice = true;
+                            $("#pingCode").attr("disabled", true);
+                            $('#switch_bar').css("background", "#32A5BE");
+                            $('#switch_bar').css("color", "#FFF");
+                            $('#input_bar').css("display", "none");
+                            //$('#input_bar').css("background-image", "url(../images/pin_bg.png)");
+                            // $('#pingCode').css("background", "#32A5BE");
+                            //$('#pingCode').css("color", "#FFF");
+                            checked = true;
+                            md5_code = resp.md5_code;
+                            if (checked) {
+                                $.cookie('md5_code', resp.md5_code, { expires: 30});
+                            }
+                        } else {
+                            $('#notice_info').empty('').append('Pin Code输入有误');
+                            prevalidPinCodeFlag = true;
+                            $("#pingCode").attr("disabled", false);
+                        }
+                    },
+                    error: function () {
+                        $('#info_right').empty('').append('系统错误，联系客服！');
+                    }
+                });
+
+            }
+        }
+
+        function switchscreen(msg_type, inputurl) {
+            console.log('input url is ', inputurl)
+            if (isConnDevice) {
+                if (inputurl == "支持电驴、磁力链或视频网站地址") {
+                    inputurl = '';
+                }
+                if (inputurl === "" || inputurl === undefined) {
+                    $("#notice_info_switch").empty('').append('<span class="error">视频地址不能为空</span>');
+                } else {
+                    $("#switchscreen").attr("disabled", 'disabled');
+                    $("#notice_info_switch").empty('').append('正在解析视频地址...');
+                    var postData = {
+                        "md5_code": md5_code,
+                        "url": inputurl,
+                        "msg_type": msg_type,
+                        "time": new Date().valueOf()
+                    };
+                    var th = $(this);
+                    $.ajax({
+                        type: "GET",
+                        url: '/switchScreen',
+                        data: postData,
+                        cache: false,
+                        beforeSend: function () {
+                            if ($(th).attr('data-sending') == 1) return false;//如果已经在发送，则取消本次发送
+                            $(th).attr('data-sending', '1');//发送前作标记，避免纠结的浏览器重复发送
+                            return true;
+                        },
+                        success: function (data) {
+                            // alert(data);
+                            $(th).attr('data-sending', '0');
+                            $("#switchscreen").removeAttr("disabled");
+                            if (data == "fail") {
+                                $("#notice_info_switch").empty('').append('解析视频地址失败');
+                            } else if (data == "allsuccess") {
+                                $("#notice_info_switch").empty('').append('推送完成');
+                                $("#url").val('');
+                            } else if (data == "allfail") {
+                                $("#notice_info_switch").empty('').append('推送失败');
+                            } else if (data == "pinfail") {
+                                $("#notice_info_switch").empty('').append('Pin码错误');
+                                clearInput();
+                            }
+                        },
+                        error: function () {
+                            $(th).attr('data-sending', '0');
+                            $("#switchscreen").removeAttr("disabled");
+                            $("#notice_info_switch").empty('').append('解析视频地址失败');
+                        }
+                    });
+                }
+            } else {
+                $("#notice_info_switch").empty('').append('Pin码错误');
+                clearInput();
+            }
+        }
+
+        function switchPC(){
+         var targeturl = 'http://tt.showkey.tv?agent=pc&url='+inputurl;
+         window.open(targeturl);
+        }
+    </script>
+</head>
+<body>
+    <div id="popup">
+        <div class="topbar">
+            <h2 class="android"></h2>
+        </div>
+        <div class="info_bar">
+            <span id="info_bar_left">请先输入PIN码</span><span id="info_bar_right"></span>
+        </div>
+
+        <div class="input_bar" id="input_bar">
+            <input type="text" onblur="getPincode();" onkeyup="getPincode();" maxlength="6" value="" id="pingCode"
+                   name="pingCode" class="panelinput">
+        </div>
+        <div id="notice_info"></div>
+        <div>
+            <h2>推送到盒子,智能电视大屏幕观看</h2>
+        </div>
+
+        <div id="clearText" onclick="clearText();" style="display: none"></div>
+
+        <div id="switch_bar" onclick="switchscreen('5');">
+            <span id='switch_button'>转屏推电视</span>
+        </div>
+        <div id="notice_info_switch"></div>
+
+        <div id="helper">
+            <a href="" onclick='switchPC();'>切换到PC版</a>
+            <a href="weixin.html">使用帮助？</a>
+        </div>
+    </div>
+
+    <!-- 百度统计代码开奿-->
+    <div style="display:none">
+        <script type="text/javascript">
+        var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+        document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fb8ecaacf6221a4cf0647be94dfeb20a8' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+    </div>
+    <!-- 百度统计代码结束 -->
+</body>
+</html>
+
+
+
+
+
