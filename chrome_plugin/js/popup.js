@@ -4,84 +4,173 @@
 
 document.write("<scri"+"pt src='js/jquery.js'></scr"+"ipt>");
 
+var isShowVCode = false;
 var version;
 var client = "Plugin";
 
-function prevalidPinCode() {
-
-    var pincode = document.getElementById('pingCode').value;
-    if (pincode != '' && pincode.length == 6)
+function prevalidVCode() {
+	var vCode = document.getElementById('vCode').value;
+    if (vCode != '' && vCode.length == 4)
     {
-    	console.log("begin validate pin code");
-   		document.getElementById('errorMsg').innerHTML = '验证中...';
- 	    document.getElementById('pingCode').disabled = true;
-
-		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function() {
-		console.log(xhr);
-			if (xhr.readyState==4 || xhr.status==200)
-			{
-
-				if (xhr.responseText !== 'false')
-				{
-					console.log("PIN码正确");
-					document.getElementById('errorMsg').innerHTML = 'PIN码验证成功';
-					document.getElementById('errorMsg').style.color = "#8ac";
-					document.getElementById('pin_statue_empty').style.display = "none";
-					document.getElementById('pin_statue_success').style.display = "block";
-					document.getElementById('pin_statue_fail').style.display = "none";
-
-					setVideoUrl();
-					//var resp = eval('('+ xhr.responseText + ')');
-					var resp = JSON.parse(xhr.responseText);
-					var device = resp.device;
-					var channel =  resp.channel;
-					var mac = resp.mac;
-					var md5 = resp.md5_code;
-
-	        		chrome.cookies.set({"url":"http://tt.showkey.tv","name":"md5_code","value":md5});
-	        		//http://tt.yue001.com:8080
+    	console.log("begin validate vCode");
+    	
+    	chrome.cookies.get({"url":"http://tt.showkey.tv","name":"t_vcode"},function(cookie) {
+	        //cookie.value
+	        if (cookie === null)
+	        {
+		        console.log("cookie not exist");
+	        }
+	        else
+	        {
+		        var t = cookie.value;
+		        var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+					console.log(xhr);
+					if (xhr.readyState==4 && xhr.status==200)
+					{
+						var resp = JSON.parse(xhr.responseText);
+						//console.log(resp);
+						if (resp === true)
+						{
+							console.log("验证码验证成功")
+							
+							chrome.cookies.remove({"url": "http://tt.showkey.tv", "name": "t_vcode"});
+							document.getElementById('vCode').innerHTML = "";
+							document.getElementById('vCodeDiv').style.display = "none";
+							
+							isShowVCode = false;
+							prevalidPinCode();
+							
+						}
+						else
+						{
+						console.log("验证码验证失败");
+						isShowVCode = true;
+							getVCode();
+						}
+					}
 				}
-				else
-				{
-					console.log("PIN码错误");
-					document.getElementById('errorMsg').innerHTML = 'PIN码验证失败,请重新输入';
-					document.getElementById('errorMsg').style.color = "#f00";
+				xhr.onerror = function(){
+					console.log("请求失败");
+				}
+				//'/joyplus/checkvcode?t='+$.cookie('t_vcode')+'&vcode='+vcode,
+				var requestURL = 'http://tt.showkey.tv/joyplus/checkvcode?t=' + t + '&vcode=' + vCode + '&client=' + client +'&version=' + version;
+				xhr.open("GET", requestURL, true);
+				xhr.send(null);
+	        }
+		});
+    }
+}
+
+function getVCode() {
+						//请求验证码
+						var t_vcode = new Date().valueOf();
+						var req = new XMLHttpRequest();
+						req.onreadystatechange = function() {
+							//console.log(req.responseText);
+							if (req.readyState==4 && req.status==200)
+							{
+								document.getElementById('vCodeDiv').style.display = "block";
+								$('#vCodeImg').attr("src", "http://tt.showkey.tv/joyplus/vcode?t="+t_vcode);
+								isShowVCode = true;
+								console.log(t_vcode);
+								var str_vcode = t_vcode.toString();
+								chrome.cookies.set({"url":"http://tt.showkey.tv","name":"t_vcode","value":str_vcode});
+							}
+						}
+						req.onerror = function(){
+							console.log("send request fail");
+						}
+						///joyplus/checkvcode?t='+$.cookie('t_vcode')+'&vcode='+vcode,
+						var requestURL1 = 'http://tt.showkey.tv/joyplus/vcode?t=' + t_vcode + '&client=' + client +'&version=' + version;
+						console.log(requestURL1);
+						req.open("GET", requestURL1, true);
+						req.send(null);
+}
+
+function prevalidPinCode() {
+	console.log("prevalidPinCode called");
+    var pincode = document.getElementById('pingCode').value;
+    if (pincode != '' && pincode.length == 6 && !isShowVCode)
+    {
+    
+    	chrome.cookies.get({"url":"http://tt.showkey.tv","name":"t_vcode"},function(cookie) {
+	        
+	        if (cookie === null)
+	        {
+		        console.log("begin validate pin code");
+		   		document.getElementById('errorMsg').innerHTML = '验证中...';
+		 	    document.getElementById('pingCode').disabled = true;
+		
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+				console.log(xhr);
+					if (xhr.readyState==4 && xhr.status==200)
+					{
+						var resp = JSON.parse(xhr.responseText);
+						//console.log(resp.status);
+						if (resp.status === true)
+						{
+							console.log("PIN码正确");
+							
+							document.getElementById('vCodeDiv').style.display = "none";
+							document.getElementById('errorMsg').innerHTML = 'PIN码验证成功';
+							document.getElementById('errorMsg').style.color = "#8ac";
+							document.getElementById('pin_statue_empty').style.display = "none";
+							document.getElementById('pin_statue_success').style.display = "block";
+							document.getElementById('pin_statue_fail').style.display = "none";
+		
+							setVideoUrl();
+							//var resp = eval('('+ xhr.responseText + ')');
+							//var resp = JSON.parse(xhr.responseText);
+							var device = resp.device;
+							var channel =  resp.channel;
+							var mac = resp.mac;
+							var md5 = resp.md5_code;
+		
+			        		chrome.cookies.set({"url":"http://tt.showkey.tv","name":"md5_code","value":md5});
+						}
+						else
+						{
+							console.log("PIN码错误");
+							document.getElementById('errorMsg').innerHTML = 'PIN码验证失败,请重新输入';
+							document.getElementById('errorMsg').style.color = "#f00";
+							document.getElementById('pin_statue_empty').style.display = "none";
+							document.getElementById('pin_statue_success').style.display = "none";
+							document.getElementById('pin_statue_fail').style.display = "block";
+		
+							document.getElementById('pingCode').disabled = false;
+							
+							if (resp.vcode === false)
+							{
+								getVCode();
+							}
+						}
+		
+					}
+		
+				}
+				xhr.onerror = function(){
+					console.log("请求失败");
 					document.getElementById('pin_statue_empty').style.display = "none";
 					document.getElementById('pin_statue_success').style.display = "none";
 					document.getElementById('pin_statue_fail').style.display = "block";
-
+					document.getElementById('errorMsg').innerHTML = '验证请求失败';
 					document.getElementById('pingCode').disabled = false;
 				}
-
-			}
-			else
-			{
-				console.log("请求失败");
-				document.getElementById('errorMsg').innerHTML = '验证请求失败';
-				document.getElementById('errorMsg').style.color = "#f00";
-				document.getElementById('pin_statue_empty').style.display = "none";
-				document.getElementById('pin_statu_esuccess').style.display = "none";
-				document.getElementById('pin_statue_fail').style.display = "block";
-
-				document.getElementById('pingCode').disabled = false;
-			}
-
-		}
-		xhr.onerror = function(){
-			console.log("请求失败");
-			document.getElementById('pin_statue_empty').style.display = "none";
-			document.getElementById('pin_statue_success').style.display = "none";
-			document.getElementById('pin_statue_fail').style.display = "block";
-			document.getElementById('errorMsg').innerHTML = '验证请求失败';
-			document.getElementById('pingCode').disabled = false;
-		}
-		var requestURL = 'http://tt.showkey.tv/preValidatePinCode?pin_code=' + pincode + '&client=' + client +'&version=' + version;
-
-		xhr.open("GET", requestURL, true);
-		xhr.send(null);
-    }
-
+				var requestURL = 'http://tt.showkey.tv/preValidatePinCode?pin_code=' + pincode + '&client=' + client +'&version=' + version;
+		
+				xhr.open("GET", requestURL, true);
+				xhr.send(null);
+	        }
+	        else
+	        {
+	        	console.log(cookie.value);
+				document.getElementById('vCodeDiv').style.display = "block";
+				$('#vCodeImg').attr("src", "http://tt.showkey.tv/joyplus/vcode?t="+cookie.value);
+	        }
+		});
+	}
 }
 
 function unbindBtnUp(){
@@ -266,10 +355,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
   var pingCode = document.getElementById('pingCode');
-  //var pingCode = document.querySelectorAll('#pingCode');
   pingCode.addEventListener('keyup', prevalidPinCode);
   pingCode.addEventListener('blur', prevalidPinCode);
-
+  
+  var vCode = document.getElementById('vCode');
+  vCode.addEventListener('keyup', prevalidVCode);
+  vCode.addEventListener('blur', prevalidVCode);
 
   var unbindBtn = document.getElementById('unbindBtn');
   unbindBtn.addEventListener('mouseup', unbindBtnUp);

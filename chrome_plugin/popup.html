@@ -150,6 +150,33 @@ body{background-color:#FFF}
 	margin-top:20px;
 	}
 	
+#vCodeDiv{
+	margin-left: 20px;
+	margin-top: 10px;
+	height: 40px;
+	width: 320px;
+}
+
+#vCode{
+	margin-top: 0;
+	height:32px;
+	width:175px;
+	background:url(http://tvupdate.joyplus.tv/showkeyextension/images/yanzhengma.png) no-repeat;
+	border:none;
+	background-color:none;
+	color:rgba(122, 159, 189, 1);
+	text-align:center;
+	font-size:18px;
+	outline: none;
+}
+
+#vCodeImg{
+	margin-top: -35px;
+	margin-left: 175px;
+	height:30px;
+	width:100px;
+}
+
 </style>
 
 <body>
@@ -181,6 +208,11 @@ maxlength=6 />
 </div>
 
 <div class="pushResultDiv" id="pushResultDiv"><span class="pushResultMsg" id="pushResultMsg">请输入磁力链、电驴或视频网址</span></div>
+</div>
+
+<div class="vCodeDiv" id="vCodeDiv" style="display:none">
+	<input type="text" name="vCode" id="vCode" value="" maxlength=4 />
+	<img class="vCodeImg" id="vCodeImg" width="100px" height="30px"/>
 </div>
 
 <div class="confirmDiv" id="confirmDiv">
