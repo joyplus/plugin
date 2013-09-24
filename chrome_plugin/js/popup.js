@@ -173,6 +173,10 @@ function prevalidPinCode() {
 	}
 }
 
+function vCodeImgTouchUp() {
+	getVCode();
+}
+
 function unbindBtnUp(){
 	document.getElementById('unbindImage').src = "http://tvupdate.joyplus.tv/showkeyextension/images/unbind_n.png";
 	//chrome.cookies.get({"url":"http://tt.yue001.com:8080","name":"md5_code"}
@@ -361,6 +365,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var vCode = document.getElementById('vCode');
   vCode.addEventListener('keyup', prevalidVCode);
   vCode.addEventListener('blur', prevalidVCode);
+
+  var vCodeImg = document.getElementById('vCodeImg');
+  vCodeImg.addEventListener('mouseup', vCodeImgTouchUp);
 
   var unbindBtn = document.getElementById('unbindBtn');
   unbindBtn.addEventListener('mouseup', unbindBtnUp);
